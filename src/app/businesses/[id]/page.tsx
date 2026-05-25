@@ -2,8 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { 
   Building2, MapPin, Edit, Compass, Package, LineChart, Calendar, 
-  Sparkles, Globe, MessageSquare, Target, ArrowLeft, Plus, Play,
-  Facebook, Instagram, Radio, CheckCircle2, ChevronRight
+  Sparkles, Globe, MessageSquare, Target, ArrowLeft, Plus, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -11,7 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { getBusinessDetailAction } from "@/lib/actions/businesses";
 import { getProductServicesAction } from "@/lib/actions/products";
 import { getLatestPageInputAction } from "@/lib/actions/page-inputs";
+import { getBusinessAuditsAction } from "@/lib/actions/audits";
 import { ProductCatalog } from "@/components/businesses/product-catalog";
+import { AuditsTab } from "@/components/businesses/audits-tab";
 import { requireAuth } from "@/lib/session";
 import { DeleteBusinessButton } from "@/components/businesses/delete-button";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ export default async function BusinessDetailPage({ params, searchParams }: Busin
   // Fetch dynamic tab data
   const products = await getProductServicesAction(id);
   const latestPageInput = await getLatestPageInputAction(id);
+  const pastAudits = await getBusinessAuditsAction(id);
 
   const activeTab = tab;
 
@@ -338,135 +340,12 @@ export default async function BusinessDetailPage({ params, searchParams }: Busin
                 </div>
               </div>
             ) : (
-              /* If social page details are configured */
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-scale-in">
-                
-                {/* Left/Middle Column: Page Input Overview Card */}
-                <div className="lg:col-span-2 space-y-6">
-                  <Card className="border shadow-xs bg-card/60">
-                    <CardHeader className="space-y-1.5 border-b pb-5">
-                      <div className="flex justify-between items-center flex-wrap gap-2">
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
-                            {latestPageInput.platform === "facebook" ? (
-                              <Facebook className="size-4.5" />
-                            ) : latestPageInput.platform === "instagram" ? (
-                              <Instagram className="size-4.5" />
-                            ) : (
-                              <Radio className="size-4.5" />
-                            )}
-                          </div>
-                          <CardTitle className="text-lg font-bold">
-                            Active Page Configuration
-                          </CardTitle>
-                        </div>
-
-                        <Badge variant="outline" className="text-[10px] font-semibold bg-background/50 uppercase tracking-wider">
-                          Platform: {latestPageInput.platform}
-                        </Badge>
-                      </div>
-                      <CardDescription className="text-xs">
-                        Configured properties and social feeds for AI model analysis.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-6 space-y-5 text-xs leading-relaxed">
-                      
-                      {/* URL and Handle grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-dashed">
-                        {latestPageInput.pageUrl && (
-                          <div className="space-y-1">
-                            <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Page Link</span>
-                            <a 
-                              href={latestPageInput.pageUrl.startsWith("http") ? latestPageInput.pageUrl : `https://${latestPageInput.pageUrl}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
-                              className="text-primary hover:underline text-sm font-semibold block truncate"
-                            >
-                              {latestPageInput.pageUrl}
-                            </a>
-                          </div>
-                        )}
-                        {latestPageInput.handle && (
-                          <div className="space-y-1">
-                            <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Social Handle</span>
-                            <p className="text-sm font-semibold text-foreground">@{latestPageInput.handle.replace("@", "")}</p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Bio */}
-                      {latestPageInput.bioText && (
-                        <div className="space-y-1.5 pb-4 border-b border-dashed">
-                          <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Current Page Bio</span>
-                          <p className="text-foreground text-sm leading-relaxed">{latestPageInput.bioText}</p>
-                        </div>
-                      )}
-
-                      {/* Raw Feed Snippet */}
-                      {latestPageInput.rawPostsText && (
-                        <div className="space-y-1.5">
-                          <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Recent Social Posts pasted</span>
-                          <div className="p-3 rounded bg-muted/50 border max-h-48 overflow-y-auto leading-normal text-muted-foreground text-[11px] whitespace-pre-wrap leading-relaxed font-mono">
-                            {latestPageInput.rawPostsText}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Strategic Focus */}
-                      {latestPageInput.manualNotes && (
-                        <div className="space-y-1.5 pt-4 border-t border-dashed">
-                          <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">Strategic Focus & Guidelines</span>
-                          <p className="text-foreground text-sm leading-relaxed">{latestPageInput.manualNotes}</p>
-                        </div>
-                      )}
-
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Right Column: Execution Card */}
-                <div className="space-y-6">
-                  
-                  {/* Pipeline Control Card */}
-                  <Card className="border border-primary/20 shadow-xs bg-primary/5">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base font-bold flex items-center gap-1.5 text-primary">
-                        <Sparkles className="size-4" />
-                        Audit Status
-                      </CardTitle>
-                      <CardDescription className="text-xs">
-                        Generate client-ready audits.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-xs text-muted-foreground leading-relaxed space-y-4">
-                      <p>
-                        Social page input is successfully configured and saved! You are now ready to run the automated AI conversion audit.
-                      </p>
-                      
-                      {/* Custom indicator badge */}
-                      <div className="flex items-center gap-2 p-2.5 rounded-lg border bg-background/50 border-border/80">
-                        <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-                        <span className="font-semibold text-foreground">Feed ready for audit</span>
-                      </div>
-
-                      <div className="space-y-2 pt-2">
-                        <Button disabled size="sm" className="w-full justify-center gap-1.5">
-                          <Play className="size-4" />
-                          Run Page Audit (Phase 5)
-                        </Button>
-                        <Button asChild size="sm" variant="outline" className="w-full justify-center gap-1.5 cursor-pointer">
-                          <Link href={`/businesses/${id}/page-inputs/new`}>
-                            <Edit className="size-4" />
-                            Re-configure Input
-                          </Link>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                </div>
-
-              </div>
+              /* Render dynamic active audits tab wrapper */
+              <AuditsTab 
+                businessId={id} 
+                latestPageInput={latestPageInput} 
+                pastAudits={pastAudits} 
+              />
             )}
           </div>
         )}
