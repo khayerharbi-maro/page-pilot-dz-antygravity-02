@@ -58,6 +58,15 @@ export function SiteHeader() {
                   Dashboard
                 </Link>
                 <Link
+                  href="/businesses"
+                  className={cn(
+                    "px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-accent/50",
+                    pathname?.startsWith("/businesses") && "text-foreground bg-accent font-semibold"
+                  )}
+                >
+                  Businesses
+                </Link>
+                <Link
                   href="/library"
                   className={cn(
                     "px-3 py-1.5 rounded-md transition-colors hover:text-foreground hover:bg-accent/50",
@@ -82,6 +91,15 @@ export function SiteHeader() {
                   )}
                 >
                   Dashboard
+                </Link>
+                <Link
+                  href="/businesses"
+                  className={cn(
+                    "px-2 py-1 rounded-md transition-colors",
+                    pathname?.startsWith("/businesses") && "text-foreground bg-accent font-semibold"
+                  )}
+                >
+                  Businesses
                 </Link>
                 <Link
                   href="/library"

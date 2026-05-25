@@ -1,45 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { Lock, Compass, Plus, Library, Sparkles, AlertCircle, ArrowRight, LineChart, Calendar } from "lucide-react";
-import { UserProfile } from "@/components/auth/user-profile";
+import { Compass, Plus, Library, Sparkles, AlertCircle, ArrowRight, LineChart, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSession } from "@/lib/auth-client";
+import { requireAuth } from "@/lib/session";
+import { getDashboardStatsAction } from "@/lib/actions/businesses";
 
-export default function DashboardPage() {
-  const { data: session, isPending } = useSession();
-
-  if (isPending) {
-    return (
-      <div className="flex justify-center items-center h-[calc(100vh-4rem)] bg-background">
-        <div className="flex flex-col items-center gap-2">
-          <Compass className="size-8 text-primary animate-spin" />
-          <span className="text-sm text-muted-foreground font-medium">Loading workspace...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return (
-      <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[calc(100vh-8rem)]">
-        <div className="max-w-md w-full mx-auto text-center space-y-6 border p-8 rounded-lg bg-card shadow-sm">
-          <div className="size-16 mx-auto rounded-full bg-destructive/10 flex items-center justify-center">
-            <Lock className="w-8 h-8 text-destructive animate-bounce" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">Protected Workspace</h1>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Please sign in to access the PagePilot DZ dashboard and analyze your business pages.
-            </p>
-          </div>
-          <div className="pt-2">
-            <UserProfile />
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default async function DashboardPage() {
+  const session = await requireAuth();
+  const stats = await getDashboardStatsAction();
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -72,11 +39,11 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Stat 1 */}
-        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-xs transition-all duration-200 hover:shadow-sm">
+        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-xs transition-all duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Businesses</p>
-              <h2 className="text-3xl font-bold">0</h2>
+              <h2 className="text-3xl font-bold">{stats.businesses}</h2>
             </div>
             <div className="size-9 rounded-md bg-accent flex items-center justify-center text-accent-foreground">
               <Compass className="size-4.5" />
@@ -84,16 +51,16 @@ export default function DashboardPage() {
           </div>
           <p className="text-xs text-muted-foreground mt-4 font-medium flex items-center gap-1">
             <AlertCircle className="size-3 text-primary" />
-            No business profiles created yet
+            {stats.businesses > 0 ? `${stats.businesses} business profiles active` : "No business profiles created yet"}
           </p>
         </div>
 
         {/* Stat 2 */}
-        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-xs transition-all duration-200 hover:shadow-sm">
+        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-xs transition-all duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Audits Generated</p>
-              <h2 className="text-3xl font-bold">0</h2>
+              <h2 className="text-3xl font-bold">{stats.audits}</h2>
             </div>
             <div className="size-9 rounded-md bg-accent flex items-center justify-center text-accent-foreground">
               <LineChart className="size-4.5" />
@@ -101,16 +68,16 @@ export default function DashboardPage() {
           </div>
           <p className="text-xs text-muted-foreground mt-4 font-medium flex items-center gap-1">
             <AlertCircle className="size-3 text-primary" />
-            Page Audit scoring runs
+            {stats.audits > 0 ? `${stats.audits} audits run` : "Page Audit scoring runs"}
           </p>
         </div>
 
         {/* Stat 3 */}
-        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-xs transition-all duration-200 hover:shadow-sm">
+        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-xs transition-all duration-200 hover:shadow-md">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Content Plans</p>
-              <h2 className="text-3xl font-bold">0</h2>
+              <h2 className="text-3xl font-bold">{stats.contentPlans}</h2>
             </div>
             <div className="size-9 rounded-md bg-accent flex items-center justify-center text-accent-foreground">
               <Calendar className="size-4.5" />
@@ -118,7 +85,7 @@ export default function DashboardPage() {
           </div>
           <p className="text-xs text-muted-foreground mt-4 font-medium flex items-center gap-1">
             <AlertCircle className="size-3 text-primary" />
-            Weekly calendars generated
+            {stats.contentPlans > 0 ? `${stats.contentPlans} content calendars` : "Weekly calendars generated"}
           </p>
         </div>
 
@@ -197,11 +164,18 @@ export default function DashboardPage() {
         {/* Primary CTA Area */}
         <div className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground text-left max-w-md">
-            <strong>Note:</strong> This is a UI prototype shell of Phase 1. Database models, AI generation APIs, and detail pages will be enabled in subsequent waves.
+            {stats.businesses > 0 ? (
+              <span>Your workspace is active! View your business profiles to continue planning or add a new brand.</span>
+            ) : (
+              <span>Create your first business profile to unlock page audits and AI social media content planning.</span>
+            )}
           </div>
-          <Button asChild size="lg" className="w-full sm:w-auto h-11 px-8">
-            <Link href="/businesses/new" className="flex items-center justify-center gap-1.5 font-medium">
-              Create Your First Business Profile
+          <Button asChild size="lg" className="w-full sm:w-auto h-11 px-8 cursor-pointer">
+            <Link 
+              href={stats.businesses > 0 ? "/businesses" : "/businesses/new"} 
+              className="flex items-center justify-center gap-1.5 font-medium"
+            >
+              {stats.businesses > 0 ? "View Active Businesses" : "Create Your First Business Profile"}
               <ArrowRight className="size-4" />
             </Link>
           </Button>
