@@ -1,172 +1,151 @@
 "use client";
 
 import Link from "next/link";
-import { Video, Shield, Database, Palette, Bot } from "lucide-react";
-import { SetupChecklist } from "@/components/setup-checklist";
-import { StarterPromptModal } from "@/components/starter-prompt-modal";
+import { LineChart, Calendar, Sparkles, Languages, ArrowRight, ShieldCheck, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDiagnostics } from "@/hooks/use-diagnostics";
+import { useSession } from "@/lib/auth-client";
 
 export default function Home() {
-  const { isAuthReady, isAiReady, loading } = useDiagnostics();
+  const { data: session, isPending } = useSession();
+
   return (
-    <main className="flex-1 container mx-auto px-4 py-12">
-      <div className="max-w-4xl mx-auto text-center space-y-8">
-        <div className="space-y-4">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-              <Bot className="h-7 w-7 text-primary" />
-            </div>
-            <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
-              Starter Kit
+    <main className="flex-1 min-h-screen bg-background relative overflow-hidden" id="main-content">
+      {/* Decorative Radial Background */}
+      <div 
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[500px] pointer-events-none opacity-20 dark:opacity-10" 
+        style={{
+          backgroundImage: 'radial-gradient(circle at 50% 0%, var(--accent) 0%, transparent 60%)'
+        }}
+        aria-hidden="true"
+      />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-10">
+          
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border bg-accent/30 text-accent-foreground text-xs font-semibold animate-fade-in">
+            <Sparkles className="size-3.5 text-primary animate-pulse" />
+            <span>أول أداة جزائرية بالذكاء الاصطناعي لتحليل الصفحات</span>
+          </div>
+
+          {/* Hero Heading */}
+          <div className="space-y-4">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight leading-tight sm:leading-none text-foreground">
+              حلل صفحتك، افهم نقاط ضعفها، وخذ <br className="hidden sm:inline" />
+              <span className="bg-gradient-to-r from-primary via-primary/95 to-primary/70 bg-clip-text text-transparent">
+                خطة محتوى أسبوعية جاهزة للنشر
+              </span>
             </h1>
-          </div>
-          <h2 className="text-2xl font-semibold text-muted-foreground">
-            Complete Boilerplate for AI Applications
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            A complete agentic coding boilerplate with authentication, database, AI
-            integration, and modern tooling for building AI-powered applications
-          </p>
-        </div>
-
-        {/* YouTube Tutorial Video */}
-        <div className="space-y-4">
-          <h3 className="text-2xl font-semibold flex items-center justify-center gap-2">
-            <Video className="h-6 w-6" />
-            Video Tutorial
-          </h3>
-          <p className="text-muted-foreground">
-            Watch the complete walkthrough of this agentic coding boilerplate:
-          </p>
-          <div className="relative w-full max-w-3xl mx-auto">
-            <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-lg border">
-              <iframe
-                className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/JQ86N3WOAh4"
-                title="Agentic Coding Boilerplate Tutorial"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Authentication
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Better Auth with Google OAuth integration
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+              PagePilot DZ transforms your Facebook & Instagram pages into high-converting sales funnels. Stop posting randomly—generate tailored content strategies in Algerian Darija, Arabic, and French.
             </p>
           </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <Database className="h-4 w-4" />
-              Database
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Drizzle ORM with PostgreSQL setup
-            </p>
-          </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <Bot className="h-4 w-4" />
-              AI Ready
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Vercel AI SDK with OpenRouter integration
-            </p>
-          </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              UI Components
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              shadcn/ui with Tailwind CSS
-            </p>
-          </div>
-        </div>
 
-        <div className="space-y-6 mt-12">
-          <SetupChecklist />
+          {/* Hero Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up">
+            {isPending ? (
+              <Button size="lg" disabled className="w-full sm:w-auto h-11 px-8 rounded-md">
+                Loading...
+              </Button>
+            ) : session ? (
+              <Button asChild size="lg" className="w-full sm:w-auto h-11 px-8 rounded-md font-medium">
+                <Link href="/dashboard">
+                  Go to Dashboard <ArrowRight className="ml-2 size-4" />
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button asChild size="lg" className="w-full sm:w-auto h-11 px-8 rounded-md font-medium">
+                  <Link href="/register">
+                    Start Auditing Now <ArrowRight className="ml-2 size-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="w-full sm:w-auto h-11 px-8 rounded-md font-medium">
+                  <Link href="/login">Sign In</Link>
+                </Button>
+              </>
+            )}
+          </div>
 
-          <h3 className="text-2xl font-semibold">Next Steps</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">
-                1. Set up environment variables
-              </h4>
-              <p className="text-sm text-muted-foreground mb-2">
-                Copy <code>.env.example</code> to <code>.env.local</code> and
-                configure:
+          {/* Core Feature Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 sm:pt-20 text-left">
+            
+            {/* Feature 1 */}
+            <div className="p-6 border rounded-lg bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 group">
+              <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 transition-colors group-hover:bg-primary/20">
+                <LineChart className="size-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-foreground">
+                Page Audit (Score /100)
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Analyze your bio, CTAs, trust signals, and content mix according to our strict Algerian conversion rubric. Find the exact friction points blocking your customer messages.
               </p>
-              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                <li>POSTGRES_URL (PostgreSQL connection string)</li>
-                <li>GOOGLE_CLIENT_ID (OAuth credentials)</li>
-                <li>GOOGLE_CLIENT_SECRET (OAuth credentials)</li>
-                <li>OPENROUTER_API_KEY (for AI functionality)</li>
-              </ul>
             </div>
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">2. Set up your database</h4>
-              <p className="text-sm text-muted-foreground mb-2">
-                Run database migrations:
+
+            {/* Feature 2 */}
+            <div className="p-6 border rounded-lg bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 group">
+              <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 transition-colors group-hover:bg-primary/20">
+                <Calendar className="size-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-foreground">
+                7-Day Content Plan
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Get a balanced distribution of educational, promotional, trust-building, and interactive content mapped specifically to your Algerian niche (Fashion, Food, Clinic, Cosmetics, etc).
               </p>
-              <div className="space-y-2">
-                <code className="text-sm bg-muted p-2 rounded block">
-                  npm run db:generate
-                </code>
-                <code className="text-sm bg-muted p-2 rounded block">
-                  npm run db:migrate
-                </code>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="p-6 border rounded-lg bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 group">
+              <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 transition-colors group-hover:bg-primary/20">
+                <Languages className="size-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-foreground">
+                Local Copiable Post Cards
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Generate high-converting hook patterns, interactive captions, and precise visual direction in professional Algerian Darija, French, or bilingual formats with a single click.
+              </p>
+            </div>
+
+          </div>
+
+          {/* Core Algerian Niche Section */}
+          <div className="border rounded-xl p-8 bg-card/30 backdrop-blur-sm text-left space-y-6 max-w-3xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-foreground">
+              <ShieldCheck className="size-6 text-primary" />
+              Engineered for the Algerian Commerce Ecosystem
+            </h3>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              Algerian customers buy through direct interactions. Standard, generic AI tools don't understand the nuance of native Darija prompts, delivery logistics (58 Wilayas), or cash-on-delivery trust cycles. PagePilot DZ has been built to generate custom CTA triggers like:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Check className="size-4 text-primary shrink-0 mt-0.5" />
+                <span>"ابعثلنا كلمة 'سعر' ونرسلك التفاصيل في الخاص"</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Check className="size-4 text-primary shrink-0 mt-0.5" />
+                <span>"راسلنا في الواتساب وخذ التوصيل مجاني لـ 58 ولاية"</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Check className="size-4 text-primary shrink-0 mt-0.5" />
+                <span>"احجز موعدك بسهولة عبر رسالة خاصة"</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Check className="size-4 text-primary shrink-0 mt-0.5" />
+                <span>"الدفع عند الاستلام مع ضمان الاستبدال الحقيقي"</span>
               </div>
             </div>
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">3. Try the features</h4>
-              <div className="space-y-2">
-                {loading || !isAuthReady ? (
-                  <Button size="sm" className="w-full" disabled={true}>
-                    View Dashboard
-                  </Button>
-                ) : (
-                  <Button asChild size="sm" className="w-full">
-                    <Link href="/dashboard">View Dashboard</Link>
-                  </Button>
-                )}
-                {loading || !isAiReady ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    disabled={true}
-                  >
-                    Try AI Chat
-                  </Button>
-                ) : (
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                  >
-                    <Link href="/chat">Try AI Chat</Link>
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">4. Start building</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Customize the components, add your own pages, and build your
-                application on top of this solid foundation.
-              </p>
-              <StarterPromptModal />
-            </div>
           </div>
+
+          {/* Footnote / Conversion Callout */}
+          <div className="pt-8 text-sm text-muted-foreground">
+            Trusted internally by agencies to run professional audits for local commerce. 
+            No credit card required to start.
+          </div>
+
         </div>
       </div>
     </main>
