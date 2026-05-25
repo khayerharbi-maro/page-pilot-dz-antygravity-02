@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signIn, useSession } from "@/lib/auth-client"
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button"
 
 export function SignInButton() {
   const { data: session, isPending: sessionPending } = useSession()
@@ -86,6 +87,15 @@ export function SignInButton() {
           Forgot password?
         </Link>
       </div>
+      <div className="relative my-2">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">or</span>
+        </div>
+      </div>
+      <GoogleSignInButton />
       <div className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link href="/register" className="text-primary hover:underline">
